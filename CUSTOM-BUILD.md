@@ -1,0 +1,58 @@
+# Building Audacity
+
+## Prerequisites
+
+* **python3** >= 3.5
+* **conan** >= 1.32.0
+* **cmake** >= 3.16
+* A working C++ 17 compiler
+
+### Linux
+
+We use GCC 9, but any C++17 compliant compiler should work.
+
+On Debian or Ubuntu, you can install everything required using the following commands:
+
+```
+$ sudo apt-get update
+$ sudo apt-get install -y build-essential cmake git python3-pip
+$ sudo pip3 install conan
+$ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jackd2-dev uuid-dev
+```
+
+## Linux & Other OS (my custom changes to build process)
+
+1. Clone Audacity from the Audacity GitHub project.
+
+    ```
+    $ git clone git@github.com:ginobean/audacity.git
+
+    ```
+
+2. Configure Audacity using CMake:
+   ```
+   $ mkdir build && cd build
+   $ cmake -G "Unix Makefiles" -Daudacity_use_ffmpeg=loaded ..
+   ```
+   By default, Debug build will be configured. To change that, pass `-DCMAKE_BUILD_TYPE=Release` to CMake.
+
+3. Build Audacity:
+   ```
+   $ make -j4  # make using 4 parallel threads.
+   ```
+
+4. Testing the build:
+   Adding a "Portable Settings" folder allows Audacity to ignore the settings of any existing Audacity installation.
+   ```
+   $ cd bin/Debug
+   $ mkdir "Portable Settings"
+   $ ./audacity
+   ```
+
+5. Installing Audacity
+   ```
+   $ cd <build directory>
+   $ make install    # do this as a normal user. just my preference..
+   ```
+
+# EOF

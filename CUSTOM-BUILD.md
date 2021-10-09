@@ -27,7 +27,7 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
     ```
     $ git clone git@github.com:ginobean/audacity.git
     $ cd audacity
-    $ git checkout custom   # my 'custom' branch.
+    $ git checkout custom-release-3.0.5   # my 'custom' branch.
 
     ```
 

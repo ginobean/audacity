@@ -60,7 +60,7 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
    ```
    $ cd <build directory>
 
-   # if you, as a normal user, have read/write access to directory /usr/local/
+   # if you, as a normal user, have write access to directory /usr/local/
    # you can simply install 'audacity' as a normal user.
    $ make install    # install as a normal user
 

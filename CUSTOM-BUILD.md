@@ -34,6 +34,11 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
 2. Configure Audacity using CMake:
    ```
    $ mkdir build && cd build
+
+   # for RELEASE VERSION:
+   $ cmake -G "Unix Makefiles" -Daudacity_use_ffmpeg=loaded -DCMAKE_BUILD_TYPE=Release ..
+
+   # for DEBUG VERSION:
    $ cmake -G "Unix Makefiles" -Daudacity_use_ffmpeg=loaded ..
    ```
    By default, Debug build will be configured. To change that, pass `-DCMAKE_BUILD_TYPE=Release` to CMake.

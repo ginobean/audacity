@@ -176,7 +176,7 @@ namespace FileNames
 
    FILES_API wxString PreferenceKey(FileNames::Operation op, FileNames::PathType type);
 
-   FILES_API FilePath FindDefaultPath(Operation op, const FilePath& defaultPath = wxT(""));
+   FILES_API FilePath FindDefaultPath(Operation op, const FilePath& defaultPath = {});
    FILES_API void UpdateDefaultPath(Operation op, const FilePath &path);
 
    // F is a function taking a wxString, returning wxString

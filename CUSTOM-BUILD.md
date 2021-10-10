@@ -59,7 +59,14 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
 5. Installing Audacity
    ```
    $ cd <build directory>
-   $ make install    # do this as a normal user. just my preference..
+
+   # if you, as a normal user, have read/write access to directory /usr/local/
+   # you can simply install 'audacity' as a normal user.
+   $ make install    # install as a normal user
+
+   # otherwise,
+   $ sudo make install   # install via sudo.
+
    ```
 
 # EOF

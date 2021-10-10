@@ -99,7 +99,7 @@ double NearestZeroCrossing
 
          dist[i] += oneDist[j];
          // Apply a small penalty for distance from the original endpoint
-         // We'll always prefer an upward  
+         // We'll always prefer an upward
          dist[i] +=
             0.1 * (abs(int(i) - int(windowSize/2))) / float(windowSize/2);
       }
@@ -243,7 +243,7 @@ void MoveWhenAudioInactive
    // If TIME_UNIT_SECONDS, snap-to will be off.
    int snapToTime = settings.GetSnapTo();
    const double t0 = viewInfo.selectedRegion.t0();
-   const double end = std::max( 
+   const double end = std::max(
       tracks.GetEndTime(),
       viewInfo.GetScreenEndTime());
 
@@ -256,7 +256,7 @@ void MoveWhenAudioInactive
       // constrain.
       newT = std::max(0.0, newT);
       newT = std::min(newT, end);
-      // Move 
+      // Move
       viewInfo.selectedRegion.setT0(
          newT,
          false); // do not swap selection boundaries
@@ -299,7 +299,7 @@ SelectionOperation operation)
    int snapToTime = settings.GetSnapTo();
    const double t0 = viewInfo.selectedRegion.t0();
    const double t1 = viewInfo.selectedRegion.t1();
-   const double end = std::max( 
+   const double end = std::max(
       tracks.GetEndTime(),
       viewInfo.GetScreenEndTime());
 
@@ -319,7 +319,7 @@ SelectionOperation operation)
    // Actually move
    if( bMoveT0 )
       viewInfo.selectedRegion.setT0( newT );
-   else 
+   else
       viewInfo.selectedRegion.setT1( newT );
 
    // Ensure it is visible
@@ -419,7 +419,7 @@ void DoBoundaryMove(AudacityProject &project, int step, SeekInfo &info)
 
    const double t0 = viewInfo.selectedRegion.t0();
    const double t1 = viewInfo.selectedRegion.t1();
-   const double end = std::max( 
+   const double end = std::max(
       tracks.GetEndTime(),
       viewInfo.GetScreenEndTime());
 
@@ -434,7 +434,7 @@ void DoBoundaryMove(AudacityProject &project, int step, SeekInfo &info)
    // Actually move
    if( bMoveT0 )
       viewInfo.selectedRegion.setT0( newT );
-   else 
+   else
       viewInfo.selectedRegion.setT1( newT );
 
    // Ensure it is visible
@@ -856,6 +856,24 @@ void OnCursorSelEnd(const CommandContext &context)
    window.ScrollIntoView(selectedRegion.t1());
 }
 
+
+void OnCursorPageBackward(const CommandContext& context)
+{
+   auto &project = context.project;
+   auto &trackPanel = TrackPanel::Get( project );
+   trackPanel.HandlePageUpKey();
+}
+
+
+void OnCursorPageForward(const CommandContext& context)
+{
+   auto &project = context.project;
+   auto &trackPanel = TrackPanel::Get( project );
+   trackPanel.HandlePageDownKey();
+}
+
+
+
 void OnCursorTrackStart(const CommandContext &context)
 {
    auto &project = context.project;
@@ -1228,7 +1246,19 @@ BaseItemSharedPtr CursorMenu()
          Options{ wxT("Home"), XO("Cursor to Project Start") } ),
       Command( wxT("CursProjectEnd"), XXO("Project E&nd"), FN(OnSkipEnd),
          CanStopFlags,
-         Options{ wxT("End"), XO("Cursor to Project End") } )
+         Options{ wxT("End"), XO("Cursor to Project End") } ),
+
+      Command( wxT("CursPageForward"), XO("Page Forward"),
+               FN(OnCursorPageForward),
+               CanStopFlags,
+               Options{}.LongName( XO("Cursor to Page Forward") ) ),
+
+      Command( wxT("CursPageBackward"), XO("Page Backward"),
+               FN(OnCursorPageBackward),
+               CanStopFlags,
+               Options{}.LongName( XO("Cursor to Page Backwards") ) )
+
+
    ) ) };
    return menu;
 }

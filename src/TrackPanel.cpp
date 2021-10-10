@@ -710,7 +710,7 @@ void TrackPanel::OnKeyDown(wxKeyEvent & event)
    case WXK_PAGEDOWN:
       HandlePageDownKey();
       return;
-      
+
    default:
       // fall through to base class handler
       event.Skip();
@@ -719,6 +719,13 @@ void TrackPanel::OnKeyDown(wxKeyEvent & event)
 
 void TrackPanel::OnMouseEvent(wxMouseEvent & event)
 {
+   if (event.MiddleDown()) {
+       auto project_ptr = GetProject();
+       auto &window = ProjectWindow::Get(*project_ptr);
+       window.Zoom(ZoomInfo::GetDefaultZoom());
+       Refresh(false);
+   }
+
    if (event.LeftDown()) {
       // wxTimers seem to be a little unreliable, so this
       // "primes" it to make sure it keeps going for a while...
@@ -958,7 +965,7 @@ void TrackPanel::UpdateTrackVRuler(Track *t)
       const auto subViews = view.GetSubViews( rect );
       if (subViews.empty())
          continue;
-   
+
       auto iter = subViews.begin(), end = subViews.end(), next = iter;
       auto yy = iter->first;
       wxSize vRulerSize{ 0, 0 };
@@ -1063,7 +1070,7 @@ void TrackPanel::VerticalScroll( float fracPosition){
    trackTop = range.sum( TrackView::GetChannelGroupHeight );
 
    int delta;
-   
+
    //Get the size of the trackpanel.
    int width, height;
    GetSize(&width, &height);
@@ -1193,7 +1200,7 @@ void DrawTrackName(
   The following classes define the subdivision of the area of the TrackPanel
   into cells with differing responses to mouse, keyboard, and scroll wheel
   events.
-  
+
   The classes defining the less inclusive areas are earlier, while those
   defining ever larger hierarchical groupings of cells are later.
 
@@ -1218,7 +1225,7 @@ void DrawTrackName(
   resize the channel views.
 
   Sixthly, divide each channel into one or more vertically stacked sub-views.
-  
+
   Lastly, split the area for each sub-view into a vertical ruler, and an area
   that displays the channel's own contents.
 
@@ -1243,7 +1250,7 @@ struct EmptyCell final : CommonTrackPanelCell {
       if ( iPass == TrackArtist::PassMargins ) {
          // Draw a margin area of TrackPanel
          auto dc = &context.dc;
-         
+
          AColor::TrackPanelBackground( dc, false );
          dc->DrawRectangle( rect );
       }
@@ -1380,9 +1387,9 @@ struct HorizontalGroup final : TrackPanelGroup {
 
    Refinement mRefinement;
 
-   HorizontalGroup(Refinement refinement) 
-      : mRefinement(std::move(refinement)) 
-   { 
+   HorizontalGroup(Refinement refinement)
+      : mRefinement(std::move(refinement))
+   {
    }
 
    Subdivision Children(const wxRect& /*rect*/) override
@@ -1533,15 +1540,15 @@ struct LabeledChannelGroup final : TrackPanelGroup {
             wxRect theRect = rect;
             auto &dc = context.dc;
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
-            
+
             AColor::TrackFocusPen( &dc, 2 );
             dc.DrawRectangle(theRect);
             theRect.Deflate(1);
-            
+
             AColor::TrackFocusPen( &dc, 1 );
             dc.DrawRectangle(theRect);
             theRect.Deflate(1);
-            
+
             AColor::TrackFocusPen( &dc, 0 );
             dc.DrawRectangle(theRect);
          }

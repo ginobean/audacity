@@ -3217,13 +3217,20 @@ void NyquistEffect::resolveFilePath(wxString& path, FileExtension extension /* e
 
    path.Trim(true).Trim(false);
 
+   auto project = FindProject();
+   FilePath defPath = {};
+
+   if (project) {
+       defPath = project->GetInitialImportPath();
+   }
+
    typedef std::unordered_map<wxString, FilePath> map;
    map pathKeys = {
       {"*home*", wxGetHomeDir()},
       {"~", wxGetHomeDir()},
       {"*default*", FileNames::DefaultToDocumentsFolder("").GetPath()},
-      {"*export*", FileNames::FindDefaultPath(FileNames::Operation::Export)},
-      {"*save*", FileNames::FindDefaultPath(FileNames::Operation::Save)},
+      {"*export*", FileNames::FindDefaultPath(FileNames::Operation::Export, defPath)},
+      {"*save*", FileNames::FindDefaultPath(FileNames::Operation::Save, defPath)},
       {"*config*", FileNames::DataDir()}
    };
 

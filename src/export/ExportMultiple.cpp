@@ -171,7 +171,7 @@ void ExportMultipleDialog::CountTracksAndLabels()
    bool anySolo = !(( mTracks->Any<const WaveTrack>() + &WaveTrack::GetSolo ).empty());
 
    mNumWaveTracks =
-      (mTracks->Leaders< const WaveTrack >() - 
+      (mTracks->Leaders< const WaveTrack >() -
       (anySolo ? &WaveTrack::GetNotSolo : &WaveTrack::GetMute)).size();
 
    // only the first label track
@@ -206,7 +206,7 @@ int ExportMultipleDialog::ShowModal()
 
    bool bHasLabels = (mNumLabels > 0);
    bool bHasTracks = (mNumWaveTracks > 0);
-   
+
    mLabel->Enable(bHasLabels && bHasTracks);
    mTrack->Enable(bHasTracks);
 
@@ -256,7 +256,7 @@ void ExportMultipleDialog::PopulateOrExchange(ShuttleGui& S)
 
 
    // Bug 1304: Set the default file path.  It's used if none stored in config.
-   auto DefaultPath = FileNames::FindDefaultPath(FileNames::Operation::Export);
+   auto DefaultPath = FileNames::FindDefaultPath(FileNames::Operation::Export, mProject->GetInitialImportPath());
 
    if (mPluginIndex == -1)
    {
@@ -703,7 +703,7 @@ static unsigned GetNumExportChannels( const TrackList &tracks )
 
    // Want only unmuted wave tracks.
    for (auto tr :
-         tracks.Any< const WaveTrack >() - 
+         tracks.Any< const WaveTrack >() -
       (anySolo ? &WaveTrack::GetNotSolo : &WaveTrack::GetMute)
    ) {
       // Found a left channel
@@ -823,7 +823,7 @@ ProgressResult ExportMultipleDialog::ExportMultipleByLabel(bool byName,
       {  // user cancelled dialogue, or deleted everything in field.
          // or maybe the label was empty??
          // So we ignore this one and keep going.
-      } 
+      }
       else
       {
          // FIXME: TRAP_ERR User could have given an illegal filename prefix.
@@ -929,7 +929,7 @@ ProgressResult ExportMultipleDialog::ExportMultipleByTrack(bool byName,
    gPrefs->Read(wxT("/AudioFiles/SkipSilenceAtBeginning"), &skipSilenceAtBeginning, false);
 
    /* Examine all tracks in turn, collecting export information */
-   for (auto tr : mTracks->Leaders<WaveTrack>() - 
+   for (auto tr : mTracks->Leaders<WaveTrack>() -
       (anySolo ? &WaveTrack::GetNotSolo : &WaveTrack::GetMute)) {
 
       // Get the times for the track
@@ -967,7 +967,7 @@ ProgressResult ExportMultipleDialog::ExportMultipleByTrack(bool byName,
       {  // user cancelled dialogue, or deleted everything in field.
          // So we ignore this one and keep going.
       }
-      else 
+      else
       {
 
          // FIXME: TRAP_ERR User could have given an illegal track name.
@@ -1014,7 +1014,7 @@ ProgressResult ExportMultipleDialog::ExportMultipleByTrack(bool byName,
    ExportKit activeSetting;  // pointer to the settings in use for this export
    std::unique_ptr<ProgressDialog> pDialog;
 
-   for (auto tr : mTracks->Leaders<WaveTrack>() - 
+   for (auto tr : mTracks->Leaders<WaveTrack>() -
       (anySolo ? &WaveTrack::GetNotSolo : &WaveTrack::GetMute)) {
 
       wxLogDebug( "Get setting %i", count );

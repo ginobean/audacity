@@ -158,7 +158,7 @@ auto ProjectFileManager::ReadProjectFile(
    /// Parse project file
    ///
    bool bParseSuccess = projectFileIO.LoadProject(fileName, discardAutosave);
-   
+
    bool err = false;
 
    if (bParseSuccess)
@@ -423,7 +423,7 @@ bool ProjectFileManager::SaveAs(bool allowOverwrite /* = false */)
    auto &window = GetProjectFrame( project );
    TitleRestorer Restorer( window, project ); // RAII
    wxFileName filename;
-   FilePath defaultSavePath = FileNames::FindDefaultPath(FileNames::Operation::Save);
+   FilePath defaultSavePath = FileNames::FindDefaultPath(FileNames::Operation::Save, mProject.GetInitialImportPath());
 
    if (projectFileIO.IsTemporary()) {
       filename.SetPath(defaultSavePath);
@@ -560,7 +560,7 @@ bool ProjectFileManager::SaveCopy(const FilePath &fileName /* = wxT("") */)
    auto &window = GetProjectFrame(project);
    TitleRestorer Restorer(window, project); // RAII
    wxFileName filename = fileName;
-   FilePath defaultSavePath = FileNames::FindDefaultPath(FileNames::Operation::Save);
+   FilePath defaultSavePath = FileNames::FindDefaultPath(FileNames::Operation::Save, mProject.GetInitialImportPath());
 
    if (fileName.empty())
    {
@@ -593,7 +593,7 @@ bool ProjectFileManager::SaveCopy(const FilePath &fileName /* = wxT("") */)
       {
          // JKC: I removed 'wxFD_OVERWRITE_PROMPT' because we are checking
          // for overwrite ourselves later, and we disallow it.
-         // Previously we disallowed overwrite because we would have had 
+         // Previously we disallowed overwrite because we would have had
          // to DELETE the many smaller files too, or prompt to move them.
          // Maybe we could allow it now that we have aup3 format?
          fName = SelectFile(FileNames::Operation::Export,
@@ -754,7 +754,7 @@ void ProjectFileManager::CompactProjectOnClose()
          // without save.  Don't leave the document blob from the last
          // push of undo history, when that undo state may get purged
          // with deletion of some new sample blocks.
-         // REVIEW: UpdateSaved() might fail too.  Do we need to test 
+         // REVIEW: UpdateSaved() might fail too.  Do we need to test
          // for that and report it?
          projectFileIO.UpdateSaved( mLastSavedTracks.get() );
       }
@@ -1088,7 +1088,7 @@ ProjectFileManager::AddImportedTracks(const FilePath &fileName,
    double newRate = 0;
    wxString trackNameBase = fn.GetName();
    int i = -1;
-   
+
    // Fix the bug 2109.
    // In case the project had soloed tracks before importing,
    // all newly imported tracks are muted.
@@ -1116,7 +1116,7 @@ ProjectFileManager::AddImportedTracks(const FilePath &fileName,
       tracks.MakeMultiChannelTrack(*first, nChannels, true);
    }
    newTracks.clear();
-      
+
    // Now name them
 
    // Add numbers to track names only if there is more than one (mono or stereo)
@@ -1133,7 +1133,7 @@ ProjectFileManager::AddImportedTracks(const FilePath &fileName,
 
       newTrack->SetSelected(true);
 
-      
+
       if (useSuffix)
           //i18n-hint Name default name assigned to a clip on track import
           newTrack->SetName(XC("%s %d", "clip name template").Format(trackNameBase, i + 1).Translation());

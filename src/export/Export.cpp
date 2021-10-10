@@ -579,13 +579,13 @@ bool Exporter::ExamineTracks()
       return false;
    }
 
-   // The skipping of silent space could be cleverer and take 
+   // The skipping of silent space could be cleverer and take
    // into account clips.
-   // As implemented now, it can only skip initial silent space that 
-   // has no clip before it, and terminal silent space that has no clip 
+   // As implemented now, it can only skip initial silent space that
+   // has no clip before it, and terminal silent space that has no clip
    // after it.
    if (mT0 < earliestBegin){
-      // Bug 1904 
+      // Bug 1904
       // Previously we always skipped initial silent space.
       // Now skipping it is an opt-in option.
       bool skipSilenceAtBeginning;
@@ -639,7 +639,7 @@ bool Exporter::GetFilename()
    wxString defext = mPlugins[mFormat]->GetExtension(mSubFormat).Lower();
 
    //Bug 1304: Set a default path if none was given.  For Export.
-   mFilename.SetPath(FileNames::FindDefaultPath(FileNames::Operation::Export));
+   mFilename.SetPath(FileNames::FindDefaultPath(FileNames::Operation::Export, mProject->GetInitialImportPath()));
    mFilename.SetName(mProject->GetProjectName());
    if (mFilename.GetName().empty())
       mFilename.SetName(_("untitled"));
@@ -1511,7 +1511,7 @@ TranslatableString AudacityExportMessageStr()
 
 // This creates a generic export error dialog
 // Untranslated ErrorCodes like "MP3:1882" are used since we don't yet have
-// a good user facing error message.  They allow us to 
+// a good user facing error message.  They allow us to
 // distinguish where the error occurred, and we can update the landing
 // page as we learn more about when (if ever) these errors actually happen.
 // The number happens to at one time have been a line number, but all
@@ -1536,5 +1536,3 @@ void ShowDiskFullExportErrorDialog(const wxFileNameWrapper &fileName)
       "Error:_Disk_full_or_not_writable"
    );
 }
-
-

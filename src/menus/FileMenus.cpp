@@ -44,7 +44,7 @@ void DoExport(AudacityProject &project, const FileExtension &format)
 {
    auto &tracks = TrackList::Get( project );
    auto &projectFileIO = ProjectFileIO::Get( project );
-   
+
    Exporter e{ project };
 
    double t0 = 0.0;
@@ -65,7 +65,7 @@ void DoExport(AudacityProject &project, const FileExtension &format)
    else {
       // We either use a configured output path,
       // or we use the default documents folder - just as for exports.
-      FilePath pathName = FileNames::FindDefaultPath(FileNames::Operation::MacrosOut);
+      FilePath pathName = FileNames::FindDefaultPath(FileNames::Operation::MacrosOut, project.GetInitialImportPath());
 
       if (!FileNames::WritableLocationCheck(pathName, XO("Cannot proceed to export.")))
       {
@@ -107,9 +107,9 @@ void DoExport(AudacityProject &project, const FileExtension &format)
       // We really can proceed without prompting.
       success = e.Process(
          nChannels,  // numChannels,
-         format,     // type, 
+         format,     // type,
          fullPath,   // full path,
-         false,      // selectedOnly, 
+         false,      // selectedOnly,
          t0,         // t0
          t1          // t1
       );
@@ -189,7 +189,7 @@ void OnOpen(const CommandContext &context )
 // JKC: This is like OnClose, except it empties the project in place,
 // rather than creating a new empty project (with new toolbars etc).
 // It does not test for unsaved changes.
-// It is not in the menus by default.  Its main purpose is/was for 
+// It is not in the menus by default.  Its main purpose is/was for
 // developers checking functionality of ResetProjectToEmpty().
 void OnProjectReset(const CommandContext &context)
 {
@@ -638,7 +638,7 @@ BaseItemSharedPtr FileMenu()
          )//,
 
          // Bug 2600: Compact has interactions with undo/history that are bound
-         // to confuse some users.  We don't see a way to recover useful amounts 
+         // to confuse some users.  We don't see a way to recover useful amounts
          // of space and not confuse users using undo.
          // As additional space used by aup3 is 50% or so, perfectly valid
          // approach to this P1 bug is to not provide the 'Compact' menu item.

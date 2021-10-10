@@ -174,7 +174,7 @@ bool FileNames::HardLinkFile( const FilePath& file1, const FilePath& file2 )
 #ifdef __WXMSW__
 
    // Fix forced ASCII conversions and wrong argument order - MJB - 29/01/2019
-   //return ::CreateHardLinkA( file1.c_str(), file2.c_str(), NULL );  
+   //return ::CreateHardLinkA( file1.c_str(), file2.c_str(), NULL );
    return ( 0 != ::CreateHardLink( file2, file1, NULL ) );
 
 #else
@@ -473,7 +473,7 @@ wxFileNameWrapper FileNames::DefaultToDocumentsFolder(const wxString &preference
 
    // MJB: Bug 1899 & Bug 2007.  Only create directory if the result is the default path
    bool bIsDefaultPath = result == defaultPath;
-   if( !bIsDefaultPath ) 
+   if( !bIsDefaultPath )
    {
       // IF the prefs directory doesn't exist - (Deleted by our user perhaps?)
       //    or exists as a file
@@ -537,7 +537,7 @@ wxString FileNames::PreferenceKey(FileNames::Operation op, FileNames::PathType t
    return key;
 }
 
-FilePath FileNames::FindDefaultPath(Operation op)
+FilePath FileNames::FindDefaultPath(Operation op, const FilePath& defaultPath)
 {
    auto key = PreferenceKey(op, PathType::User);
 
@@ -550,7 +550,23 @@ FilePath FileNames::FindDefaultPath(Operation op)
       return path;
    }
 
-   // Maybe the last used path is available
+   switch (op) {
+      case FileNames::Operation::Open:
+      case FileNames::Operation::Save:
+      case FileNames::Operation::Import:
+      case FileNames::Operation::Export:
+      case FileNames::Operation::MacrosOut:
+         if (! defaultPath.empty()) {
+            return defaultPath;
+         }
+
+      case FileNames::Operation::Temp:
+      case FileNames::Operation::Presets:
+      default:
+         break;
+   }
+
+// Maybe the last used path is available
    key = PreferenceKey(op, PathType::LastUsed);
    path = gPrefs->Read(key, wxT(""));
    if (!path.empty()) {

@@ -72,7 +72,7 @@ namespace FileNames
       , DynamicLibraries // depends on the operating system
       , TextFiles // *.txt
       , XMLFiles; // *.xml, *.XML
-   
+
    using FileTypes = std::vector< FileType >;
 
    // Convert fileTypes into a single string as expected by wxWidgets file
@@ -176,7 +176,7 @@ namespace FileNames
 
    FILES_API wxString PreferenceKey(FileNames::Operation op, FileNames::PathType type);
 
-   FILES_API FilePath FindDefaultPath(Operation op);
+   FILES_API FilePath FindDefaultPath(Operation op, const FilePath& defaultPath = wxT(""));
    FILES_API void UpdateDefaultPath(Operation op, const FilePath &path);
 
    // F is a function taking a wxString, returning wxString

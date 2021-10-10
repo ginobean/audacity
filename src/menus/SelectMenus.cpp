@@ -1250,12 +1250,12 @@ BaseItemSharedPtr CursorMenu()
 
       Command( wxT("CursPageForward"), XO("Page Forward"),
                FN(OnCursorPageForward),
-               CanStopFlags,
+               EditableTracksSelectedFlag(),
                Options{}.LongName( XO("Cursor to Page Forward") ) ),
 
       Command( wxT("CursPageBackward"), XO("Page Backward"),
                FN(OnCursorPageBackward),
-               CanStopFlags,
+               EditableTracksSelectedFlag(),
                Options{}.LongName( XO("Cursor to Page Backwards") ) )
 
 

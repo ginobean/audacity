@@ -473,6 +473,8 @@ bool Exporter::Process(bool selectedOnly, double t0, double t1)
       }
 
       FileNames::UpdateDefaultPath(FileNames::Operation::Export, mFilename.GetPath());
+      auto& undoManager = UndoManager::Get(*mProject);
+      undoManager.StateSaved();
    }
 
    return success;

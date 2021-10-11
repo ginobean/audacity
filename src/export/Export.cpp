@@ -473,8 +473,6 @@ bool Exporter::Process(bool selectedOnly, double t0, double t1)
       }
 
       FileNames::UpdateDefaultPath(FileNames::Operation::Export, mFilename.GetPath());
-      auto& undoManager = UndoManager::Get(*mProject);
-      undoManager.StateSaved();
    }
 
    return success;
@@ -953,6 +951,11 @@ bool Exporter::ExportTracks()
 
    success =
       result == ProgressResult::Success || result == ProgressResult::Stopped;
+
+   if (result == ProgressResult::Success) {
+       auto& undoManager = UndoManager::Get(*mProject);
+       undoManager.StateSaved();
+   }
 
    return success;
 }

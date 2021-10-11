@@ -1078,6 +1078,9 @@ ProjectFileManager::AddImportedTracks(const FilePath &fileName,
    auto &projectFileIO = ProjectFileIO::Get( project );
    auto &tracks = TrackList::Get( project );
 
+   auto& undoManager = UndoManager::Get(project);
+   bool prevUnsavedChanges = undoManager.UnsavedChanges();
+
    std::vector< std::shared_ptr< Track > > results;
 
    SelectUtilities::SelectNone( project );
@@ -1158,6 +1161,16 @@ ProjectFileManager::AddImportedTracks(const FilePath &fileName,
 
    history.PushState(XO("Imported '%s'").Format( fileName ),
        XO("Import"));
+
+   // Usually, an import is not something we need to recover from, via
+   // Undo.
+   // And the benefit of telling the UndoManager that we have no
+   // unsaved changes, is that when we try to close a window for an
+   // audio file that we just imported, Audacity will silently close
+   // it instead of asking us if we want to save the project..
+   if (! prevUnsavedChanges) {
+       undoManager.StateSaved();
+   }
 
 #if defined(__WXGTK__)
    // See bug #1224

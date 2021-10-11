@@ -138,7 +138,7 @@ class AUDACITY_DLL_API UndoManager final
  public:
    static UndoManager &Get( AudacityProject &project );
    static const UndoManager &Get( const AudacityProject &project );
- 
+
    explicit
    UndoManager( AudacityProject &project );
    ~UndoManager();
@@ -196,6 +196,8 @@ class AUDACITY_DLL_API UndoManager final
    int GetSavedState() const;
    void StateSaved();
 
+   void updateSavedStateVisually();
+
    // Return value must first be calculated by CalculateSpaceUsage():
    // The clipboard is global, not specific to this project, but it is
    // convenient to combine the space usage calculations in one class:
@@ -212,7 +214,7 @@ class AUDACITY_DLL_API UndoManager final
    void RemoveStateAt(int n);
 
    AudacityProject &mProject;
- 
+
    int current;
    int saved;
    UndoStack stack;

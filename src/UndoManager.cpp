@@ -36,7 +36,7 @@ UndoManager
 #include "Diags.h"
 #include "Tags.h"
 #include "widgets/ProgressDialog.h"
-
+#include "ProjectFileIO.h"
 
 #include <unordered_set>
 
@@ -46,6 +46,7 @@ wxDEFINE_EVENT(EVT_UNDO_RENAMED, wxCommandEvent);
 wxDEFINE_EVENT(EVT_UNDO_OR_REDO, wxCommandEvent);
 wxDEFINE_EVENT(EVT_UNDO_RESET, wxCommandEvent);
 wxDEFINE_EVENT(EVT_UNDO_PURGE, wxCommandEvent);
+
 
 using SampleBlockID = long long;
 
@@ -239,10 +240,12 @@ void UndoManager::RemoveStates(size_t begin, size_t end)
    // Success, commit the savepoint
    if (pTrans)
       pTrans->Commit();
-   
+
    if (begin != end)
       // wxWidgets will own the event object
       mProject.QueueEvent( safenew wxCommandEvent{ EVT_UNDO_PURGE } );
+
+   updateSavedStateVisually();
 
    // Check sanity
    wxASSERT_MSG(
@@ -255,6 +258,8 @@ void UndoManager::ClearStates()
    RemoveStates(0, stack.size());
    current = -1;
    saved = -1;
+
+   updateSavedStateVisually();
 }
 
 unsigned int UndoManager::GetNumStates()
@@ -340,6 +345,8 @@ void UndoManager::PushState(const TrackList * l,
       if (current == saved) {
          saved = -1;
       }
+
+      updateSavedStateVisually();
       return;
    }
 
@@ -367,6 +374,7 @@ void UndoManager::PushState(const TrackList * l,
 
    lastAction = longDescription;
 
+   updateSavedStateVisually();
    // wxWidgets will own the event object
    mProject.QueueEvent( safenew wxCommandEvent{ EVT_UNDO_PUSHED } );
 }
@@ -390,6 +398,7 @@ void UndoManager::SetStateTo(unsigned int n, const Consumer &consumer)
 
    consumer( *stack[current] );
 
+   updateSavedStateVisually();
    // wxWidgets will own the event object
    mProject.QueueEvent( safenew wxCommandEvent{ EVT_UNDO_RESET } );
 }
@@ -404,6 +413,8 @@ void UndoManager::Undo(const Consumer &consumer)
    mayConsolidate = false;
 
    consumer( *stack[current] );
+
+   updateSavedStateVisually();
 
    // wxWidgets will own the event object
    mProject.QueueEvent( safenew wxCommandEvent{ EVT_UNDO_OR_REDO } );
@@ -433,6 +444,7 @@ void UndoManager::Redo(const Consumer &consumer)
 
    consumer( *stack[current] );
 
+   updateSavedStateVisually();
    // wxWidgets will own the event object
    mProject.QueueEvent( safenew wxCommandEvent{ EVT_UNDO_OR_REDO } );
 }
@@ -471,8 +483,17 @@ bool UndoManager::UnsavedChanges() const
 
 void UndoManager::StateSaved()
 {
-   saved = current;
+    saved = current;
+    updateSavedStateVisually();
 }
+
+
+void UndoManager::updateSavedStateVisually()
+{
+    auto &projectFileIO = ProjectFileIO::Get( mProject );
+    projectFileIO.SetProjectTitle();
+}
+
 
 int UndoManager::GetSavedState() const
 {
@@ -489,4 +510,3 @@ int UndoManager::GetSavedState() const
 //                t ? t->GetEndTime()-t->GetStartTime() : 0);
 //   }
 //}
-

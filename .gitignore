@@ -41,6 +41,8 @@ CMakeFiles/
 CTestTestfile.cmake
 cmake_install.cmake
 build/*
+release-build/*
+debug-build/*
 
 # Waf build output
 lib-src/lv2/.buildvars

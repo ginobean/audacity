@@ -69,4 +69,35 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
 
    ```
 
+## Building on Mac OS
+
+1. Clone Audacity from the Audacity GitHub project.
+
+    ```
+    $ git clone git@github.com:ginobean/audacity.git
+    $ cd audacity
+    $ git checkout custom-release-3.0.5   # my 'custom' branch.
+    ```
+
+2. Configure Audacity using CMake:
+   ```
+   $ mkdir release-build && cd release-build
+   $ # Unfortunately, the debug version of wxWidgets seems to have some
+   $ # assertion failures going on, which makes the resulting Audacity app
+   $ # unusable. The workaround is simply to generate the makefiles (via cmake)
+   $ # for the release version, as specified here:
+   $ cmake -GXcode -T buildsystem=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release ..
+   ```
+
+3. Open Audacity XCode project:
+   ```
+   $ open Audacity.xcodeproj
+   ```
+   and build Audacity using the IDE.
+
+Steps 1 and 2 are only required for first-time builds.
+
+
+
+
 # EOF

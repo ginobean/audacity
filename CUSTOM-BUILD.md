@@ -36,7 +36,7 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
    $ mkdir build && cd build
 
    # for RELEASE VERSION:
-   $ cmake -G "Unix Makefiles" -Daudacity_use_ffmpeg=loaded -DCMAKE_BUILD_TYPE=Release ..
+   $ cmake -G "Unix Makefiles" -Daudacity_use_ffmpeg=loaded -DCMAKE_BUILD_TYPE=Release  -DAUDACITY_BUILD_LEVEL=2 ..
 
    # for DEBUG VERSION:
    $ cmake -G "Unix Makefiles" -Daudacity_use_ffmpeg=loaded ..
@@ -86,7 +86,7 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
    $ # assertion failures going on, which makes the resulting Audacity app
    $ # unusable. The workaround is simply to generate the makefiles (via cmake)
    $ # for the release version, as specified here:
-   $ cmake -GXcode -T buildsystem=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release ..
+   $ cmake -GXcode -T buildsystem=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release  -DAUDACITY_BUILD_LEVEL=2 ..
    ```
 
 3. Open Audacity XCode project:

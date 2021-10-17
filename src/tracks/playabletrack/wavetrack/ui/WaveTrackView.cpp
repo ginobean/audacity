@@ -280,7 +280,7 @@ public:
       mOrigHeight = height;
 
       mOrigHeights = mAdjuster.ComputeHeights( mViewHeight );
-      
+
       // Find the total height of the sub-views that may resize
       mTotalHeight = 0;
       auto index = ( mTop ? mAdjuster.mFirstSubView : mMySubView );
@@ -477,7 +477,7 @@ public:
       , mViewHeight{ viewHeight }
    {
    }
-   
+
    Result Click(
       const TrackPanelMouseEvent &event, AudacityProject *pProject ) override
    {
@@ -524,13 +524,13 @@ public:
          if ( yy < coord - mHeights[ ii ] + mHeights[ mMySubView ] )
             return Upward;
       }
-   
+
       if ( ii > mMySubView ) {
          if( mMySubView < mHeights.size() - 1 &&
             yy >= coord - mHeights[ mMySubView ] )
          return Downward;
       }
-   
+
       return Neutral;
    }
 
@@ -631,7 +631,7 @@ public:
       SubViewAdjuster adjuster{ view };
       if ( adjuster.NVisible() < 2 )
          return {};
-   
+
       const auto rect = GetButtonRect( state.rect );
       if ( !rect.Contains( state.state.GetPosition() ) )
          return {};
@@ -712,14 +712,14 @@ std::pair<
          // Only one cell is tested and we need to know
          // which one and it's relative location to the border.
          auto subviews = pWaveTrackView->GetSubViews();
-         auto currentSubview = std::find_if(subviews.begin(), subviews.end(), 
+         auto currentSubview = std::find_if(subviews.begin(), subviews.end(),
             [self = shared_from_this()](const auto& p){
                return self == p.second;
          });
          if (currentSubview != subviews.end())
          {
             auto currentSubviewIndex = std::distance(subviews.begin(), currentSubview);
-            
+
             const auto py = state.state.GetY();
             const auto topBorderHit = std::abs(py - state.rect.GetTop())
                <= WaveTrackView::kChannelSeparatorThickness / 2;
@@ -859,6 +859,8 @@ auto WaveTrackSubView::GetMenuItems(
 
    if (pClip)
       return {
+         { L"ZoomNormal", XO("Zoom Normal") },
+         {},
          { L"Cut", XO("Cut") },
          { L"Copy", XO("Copy") },
          { L"Paste", XO("Paste")  },
@@ -1014,7 +1016,7 @@ bool WaveTrackView::ToggleSubView(Display display)
          if (GetDisplays().size() < 2)
             // refuse to do it
             return false;
-         
+
          auto index = foundPlacement.index;
          foundPlacement = { -1, 0.0 };
          if (index >= 0) {
@@ -1175,7 +1177,7 @@ unsigned WaveTrackView::CaptureKey(wxKeyEvent& event, ViewInfo& viewInfo, wxWind
 
    if (auto affordance = GetAffordanceControls())
       result |= affordance->CaptureKey(event, viewInfo, pParent, project);
-    
+
    if (event.GetSkipped()) {
       event.Skip(false);
       result |= CommonTrackView::CaptureKey(event, viewInfo, pParent, project);
@@ -1202,7 +1204,7 @@ unsigned WaveTrackView::KeyDown(wxKeyEvent& event, ViewInfo& viewInfo, wxWindow*
 
    if (auto affordance = GetAffordanceControls())
       result |= affordance->KeyDown(event, viewInfo, pParent, project);
-    
+
    if(event.GetSkipped()) {
       event.Skip(false);
       result |= CommonTrackView::KeyDown(event, viewInfo, pParent, project);
@@ -1229,7 +1231,7 @@ unsigned WaveTrackView::Char(wxKeyEvent& event, ViewInfo& viewInfo, wxWindow* pP
 
    if (auto affordance = GetAffordanceControls())
       result |= affordance->Char(event, viewInfo, pParent, project);
-    
+
    if(event.GetSkipped()) {
       event.Skip(false);
       result |= CommonTrackView::Char(event, viewInfo, pParent, project);
@@ -1314,7 +1316,7 @@ namespace {
          gettimeofday(&tv0, NULL);
 #   endif
       }
-      
+
       ~Profiler()
       {
 #   ifdef __WXMSW__
@@ -1331,7 +1333,7 @@ namespace {
          wxPrintf(wxT("Avg waveform drawing time: %f\n"),
                   gWaveformTimeTotal / gWaveformTimeCount);
       }
-      
+
 #   ifdef __WXMSW__
       __time64_t tv0, tv1;
 #else
@@ -1489,7 +1491,7 @@ wxRect ClipParameters::GetClipRect(const WaveClip& clip, const ZoomInfo& zoomInf
     auto right = std::clamp(zoomInfo.TimeToPosition(clip.GetEndTime() - srs + margin, viewRect.x, true), edgeLeft, edgeRight);
     if (right > left)
     {
-        //after clamping we can expect that left and right 
+        //after clamping we can expect that left and right
         //are small enough to be put into int
         return wxRect(static_cast<int>(left), viewRect.y, static_cast<int>(right - left), viewRect.height);
     }
@@ -1530,7 +1532,7 @@ void WaveTrackView::BuildSubViews() const
 
       if ( pThis->mPlacements.empty() ) {
          pThis->mPlacements.resize( WaveTrackSubViews::size() );
-         
+
          auto pTrack = pThis->FindTrack();
          auto display = TracksPrefs::ViewModeChoice();
          bool multi = (display == WaveTrackViewConstants::MultiView);

@@ -550,7 +550,7 @@ UIHandle::Result SelectHandle::Click
    if ( selectChange )
       // Do not start a drag
       return RefreshAll | Cancelled;
-   
+
    auto &selectionState = SelectionState::Get( *pProject );
    const auto &settings = ProjectSettings::Get( *pProject );
    if (event.LeftDClick() && !event.ShiftDown()) {
@@ -830,6 +830,17 @@ UIHandle::Result SelectHandle::Drag
          return RefreshNone;
    }
 
+   bool bShiftDown = event.ShiftDown();
+   bool bCtrlDown = event.ControlDown();
+   // only allow user to select a region of track if they have either shift key
+   // or ctrl down pressed down.
+   // On my budget mouse, single clicking on a wave track was
+   // sometimes inadvertently selecting small regions, when I intended
+   // only to mark a point on the wave track.
+   if ((bShiftDown == false) && (bCtrlDown == false)) {
+       return RefreshNone;
+   }
+
    if (evt.pCell) {
       if ( auto clickedTrack =
           static_cast<CommonTrackPanelCell*>(evt.pCell.get())->FindTrack() ) {
@@ -855,7 +866,7 @@ UIHandle::Result SelectHandle::Drag
                   static_cast<WaveTrack*>(pTrack.get()),
                   viewInfo, y, mRect.y, mRect.height);
    #endif
-         
+
          AdjustSelection(pProject, viewInfo, x, mRect.x, clickedTrack.get());
       }
    }
@@ -919,7 +930,7 @@ HitTestPreview SelectHandle::Preview
             // No keyboard preference defined for opening Preferences dialog
             /* i18n-hint: These are the names of a menu and a command in that menu */
             keyStr = _("Edit, Preferences...");
-         
+
          /* i18n-hint: %s is usually replaced by "Ctrl+P" for Windows/Linux, "Command+," for Mac */
          tip = XO("Multi-Tool Mode: %s for Mouse and Keyboard Preferences.")
             .Format( keyStr );
@@ -996,7 +1007,7 @@ UIHandle::Result SelectHandle::Release
       mSelectionStateChanger->Commit();
       mSelectionStateChanger.reset();
    }
-   
+
    if (mUseSnap && (mSnapStart.outCoord != -1 || mSnapEnd.outCoord != -1))
       return RefreshAll;
    else

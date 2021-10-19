@@ -955,6 +955,9 @@ bool Exporter::ExportTracks()
    if (result == ProgressResult::Success) {
        auto& undoManager = UndoManager::Get(*mProject);
        undoManager.StateSaved();
+
+       auto& window = ProjectWindow::Get(*mProject);
+       window.DoZoomFit();
    }
 
    return success;

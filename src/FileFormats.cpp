@@ -221,7 +221,7 @@ int sf_subtype_bytes_per_sample(unsigned int format){
    if( subtype == SF_FORMAT_DOUBLE )
       return 8;
 
-   // might be different to 2, but this is good enough for 
+   // might be different to 2, but this is good enough for
    // WAV and AIFF file size error trapping.
    return 2;
 }
@@ -254,20 +254,22 @@ FileExtensions sf_get_all_extensions()
       sf_command(NULL, SFC_GET_FORMAT_MAJOR,
                  &format_info, sizeof (format_info)) ;
 
-      exts.push_back(LAT1CTOWX(format_info.extension));
+      exts.insert(LAT1CTOWX(format_info.extension));
    }
 
    // Some other extensions that are often sound files
    // but aren't included by libsndfile
 
-   exts.insert( exts.end(), {
-      wxT("aif") , // AIFF file with a DOS-style extension
-      wxT("ircam") ,
-      wxT("snd") ,
-      wxT("svx") ,
-      wxT("svx8") ,
-      wxT("sv16") ,
-   } );
+   for (const auto& val : {
+           wxT("aif") , // AIFF file with a DOS-style extension
+               wxT("ircam") ,
+               wxT("snd") ,
+               wxT("svx") ,
+               wxT("svx8") ,
+               wxT("sv16") ,
+               }) {
+       exts.insert(val);
+   }
 
    return exts;
 }

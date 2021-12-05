@@ -126,7 +126,7 @@ void ExportPlugin::SetDescription(const TranslatableString & description, int in
 
 void ExportPlugin::AddExtension(const FileExtension &extension, int index)
 {
-   mFormatInfos[index].mExtensions.push_back(extension);
+   mFormatInfos[index].mExtensions.insert(extension);
 }
 
 void ExportPlugin::SetExtensions(FileExtensions extensions, int index)
@@ -161,7 +161,7 @@ TranslatableString ExportPlugin::GetDescription(int index)
 
 FileExtension ExportPlugin::GetExtension(int index)
 {
-   return mFormatInfos[index].mExtensions[0];
+   return *mFormatInfos[index].mExtensions.begin();
 }
 
 FileExtensions ExportPlugin::GetExtensions(int index)
@@ -194,8 +194,8 @@ bool ExportPlugin::IsExtension(const FileExtension & ext, int index)
    {
       const auto &defext = GetExtension(i);
       const auto &defexts = GetExtensions(i);
-      int indofext = defexts.Index(ext, false);
-      if (defext.empty() || (indofext != wxNOT_FOUND))
+
+      if (defext.empty() || (defexts.find(ext) != defexts.end()))
          isext = true;
    }
    return isext;
@@ -1039,7 +1039,7 @@ void Exporter::OnFilterChanged(wxFileCtrlEvent & evt)
 
       if (index < fileTypes.size())
       {
-         mDialog->SetFileExtension(fileTypes[index].extensions[0].Lower());
+         mDialog->SetFileExtension((*fileTypes[index].extensions.begin()).Lower());
       }
    }
 #endif

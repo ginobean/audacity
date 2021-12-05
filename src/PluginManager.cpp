@@ -765,7 +765,7 @@ bool PluginManager::DropFile(const wxString &fileName)
       const auto &ff = module->InstallPath();
       const auto &extensions = module->GetFileExtensions();
       if ( !ff.empty() &&
-          extensions.Index(src.GetExt(), false) != wxNOT_FOUND ) {
+           extensions.find(src.GetExt()) != extensions.end() ) {
          TranslatableString errMsg;
          // Do dry-run test of the file format
          unsigned nPlugIns =
@@ -1175,7 +1175,7 @@ void PluginManager::LoadGroup(FileConfig *pRegistry, PluginType type)
             wxStringTokenizer tkr(strVal, wxT(":"));
             while (tkr.HasMoreTokens())
             {
-               extensions.push_back(tkr.GetNextToken());
+               extensions.insert(tkr.GetNextToken());
             }
             plug.SetImporterExtensions(extensions);
          }
@@ -1304,10 +1304,11 @@ void PluginManager::SaveGroup(FileConfig *pRegistry, PluginType type)
             pRegistry->Write(KEY_IMPORTERIDENT, plug.GetImporterIdentifier());
             const auto & extensions = plug.GetImporterExtensions();
             wxString strExt;
-            for (size_t i = 0, cnt = extensions.size(); i < cnt; i++)
-            {
-               strExt += extensions[i] + wxT(":");
+
+            for (const auto& ext : extensions) {
+                strExt += ext + wxT(":");
             }
+
             strExt.RemoveLast(1);
             pRegistry->Write(KEY_IMPORTEREXTENSIONS, strExt);
          }

@@ -178,7 +178,7 @@ public:
 
    bool SupportsExtension(const FileExtension &extension)
    {
-      return mExtensions.Index(extension, false) != wxNOT_FOUND;
+       return mExtensions.find(extension) != mExtensions.end();
    }
 
 private:

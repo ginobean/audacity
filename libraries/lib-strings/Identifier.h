@@ -223,7 +223,8 @@ class wxArrayStringEx;
 
 //! File extension, not including any leading dot
 using FileExtension = wxString;
-using FileExtensions = wxArrayStringEx;
+// using FileExtensions = wxArrayStringEx;
+using FileExtensions = std::set<wxString>;
 
 using FilePath = wxString;
 // using FilePaths = wxArrayStringEx;

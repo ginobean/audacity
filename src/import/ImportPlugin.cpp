@@ -30,7 +30,7 @@ FileExtensions ImportPlugin::GetSupportedExtensions()
 bool ImportPlugin::SupportsExtension(const FileExtension &extension)
 {
    // Case-insensitive check if extension is supported
-   return mExtensions.Index(extension, false) != wxNOT_FOUND;
+    return mExtensions.find(extension) != mExtensions.end();
 }
 
 ImportFileHandle::ImportFileHandle(const FilePath & filename)

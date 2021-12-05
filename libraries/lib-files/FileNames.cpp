@@ -104,12 +104,14 @@ wxString FileNames::FormatWildcard( const FileTypes &fileTypes )
    };
 
    const auto defaultDescription = []( const FileExtensions &extensions ){
-      // Assume extensions is not empty
-      wxString exts = extensions[0];
-      for (size_t ii = 1, size = extensions.size(); ii < size; ++ii ) {
+
+      wxString exts;
+
+      for (const auto& val : extensions) {
          exts += XO(", ").Translation();
-         exts += extensions[ii];
+         exts += val;
       }
+
       /* i18n-hint a type or types such as "txt" or "txt, xml" will be
          substituted for %s */
       return XO("%s files").Format( exts );

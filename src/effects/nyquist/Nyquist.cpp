@@ -1702,7 +1702,7 @@ FileExtensions NyquistEffect::ParseFileExtensions(const wxString & text)
       Tokenizer tzer;
       tzer.Tokenize(text, true, 1, 1);
       for (const auto &token : tzer.tokens)
-         results.push_back( UnQuote( token ) );
+         results.insert( UnQuote( token ) );
    }
    return results;
 }
@@ -1752,7 +1752,7 @@ FileNames::FileTypes NyquistEffect::ParseFileTypes(const wxString & text)
                if (ext == wxT("*"))
                   // "*.*" to match all
                   ext.clear();
-               extensions.push_back( ext );
+               extensions.insert( ext );
             }
          results.push_back( { Verbatim( pieces[ii] ), extensions } );
       }
@@ -2890,7 +2890,7 @@ void NyquistEffect::BuildEffectWindow(ShuttleGui & S)
                   if (!ctrl.fileTypes.empty()) {
                      const auto &type = ctrl.fileTypes[0];
                      if ( !type.extensions.empty() )
-                        defaultExtension = type.extensions[0];
+                        defaultExtension = *type.extensions.begin();
                   }
                   resolveFilePath(ctrl.valStr, defaultExtension);
 

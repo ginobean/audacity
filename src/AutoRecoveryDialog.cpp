@@ -39,7 +39,7 @@ public:
    explicit AutoRecoveryDialog(AudacityProject *proj);
 
    bool HasRecoverables() const;
-   FilePaths GetRecoverables();
+   wxArrayStringEx GetRecoverables();
 
 private:
    void PopulateOrExchange(ShuttleGui &S);
@@ -54,7 +54,7 @@ private:
    void OnItemActivated(wxListEvent &evt);
    void OnListKeyDown(wxKeyEvent &evt);
 
-   FilePaths mFiles;
+   wxArrayStringEx mFiles;
    wxListCtrl *mFileList;
    AudacityProject *mProject;
 
@@ -87,7 +87,7 @@ bool AutoRecoveryDialog::HasRecoverables() const
    return mFiles.size() > 0;
 }
 
-FilePaths AutoRecoveryDialog::GetRecoverables()
+wxArrayStringEx AutoRecoveryDialog::GetRecoverables()
 {
    return mFiles;
 }
@@ -150,7 +150,12 @@ void AutoRecoveryDialog::PopulateList()
    wxString pattern = wxT("*.") + FileNames::UnsavedProjectExtension();
    FilePaths files;
 
-   wxDir::GetAllFiles(tempdir, &files, pattern, wxDIR_FILES);
+   wxArrayString arrayString;
+
+   wxDir::GetAllFiles(tempdir, &arrayString, pattern, wxDIR_FILES);
+   for (const auto& val : arrayString) {
+       files.insert(val);
+   }
 
    FilePaths active = ActiveProjects::GetAll();
 
@@ -160,10 +165,7 @@ void AutoRecoveryDialog::PopulateList()
       if (fn.FileExists())
       {
          FilePath fullPath = fn.GetFullPath();
-         if (files.Index(fullPath) == wxNOT_FOUND)
-         {
-            files.push_back(fullPath);
-         }
+         files.insert(fullPath);
       }
       else
       {
@@ -280,7 +282,7 @@ void AutoRecoveryDialog::OnDiscardSelected(wxCommandEvent &WXUNUSED(evt))
       if (!mFileList->IsItemChecked(item))
       {
          // Keep in list
-         files.push_back(mFiles[item]);
+         files.insert(mFiles[item]);
          continue;
       }
       FilePath fileName = mFiles[item];
@@ -298,7 +300,7 @@ void AutoRecoveryDialog::OnDiscardSelected(wxCommandEvent &WXUNUSED(evt))
       else
          // Don't remove from disk, but do (later) open the database
          // of this saved file, and discard edits
-         files.push_back(fileName);
+         files.insert(fileName);
 
       // Forget all about it
       ActiveProjects::Remove(fileName);
@@ -306,7 +308,10 @@ void AutoRecoveryDialog::OnDiscardSelected(wxCommandEvent &WXUNUSED(evt))
 
    PopulateList();
 
-   mFiles = files;
+   mFiles.clear();
+   for (const auto& path : files) {
+       mFiles.push_back(path);
+   }
 
    if (mFileList->GetItemCount() == 0)
    {
@@ -343,10 +348,13 @@ void AutoRecoveryDialog::OnRecoverSelected(wxCommandEvent &WXUNUSED(evt))
          continue;
       }
 
-      files.push_back(mFiles[item]);
+      files.insert(mFiles[item]);
    }
 
-   mFiles = files;
+   mFiles.clear();
+   for (const auto& path : files) {
+       mFiles.push_back(path);
+   }
 
    EndModal(ID_RECOVER_SELECTED);
 }
@@ -416,7 +424,7 @@ void AutoRecoveryDialog::OnListKeyDown(wxKeyEvent &evt)
 
 ////////////////////////////////////////////////////////////////////////////
 
-static bool RecoverAllProjects(const FilePaths &files,
+static bool RecoverAllProjects(const wxArrayStringEx &files,
                                AudacityProject *&pproj)
 {
    // Open a project window for each auto save file
@@ -440,7 +448,7 @@ static bool RecoverAllProjects(const FilePaths &files,
    return result;
 }
 
-static void DiscardAllProjects(const FilePaths &files)
+static void DiscardAllProjects(const wxArrayStringEx &files)
 {
    // Open and close each file, invisibly, removing its Autosave blob
    for (auto &file: files)
@@ -475,7 +483,7 @@ bool ShowAutoRecoveryDialogIfNeeded(AudacityProject *&pproj, bool *didRecoverAny
    if (dialog.HasRecoverables())
    {
       int ret = dialog.ShowModal();
-      
+
       switch (ret)
       {
       case ID_SKIP:
@@ -503,6 +511,6 @@ bool ShowAutoRecoveryDialogIfNeeded(AudacityProject *&pproj, bool *didRecoverAny
          return false;
       }
    }
-   
+
    return success;
 }

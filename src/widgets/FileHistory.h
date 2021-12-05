@@ -52,9 +52,8 @@ class AUDACITY_DLL_API FileHistory
    void Save(wxConfigBase& config);
 
    // stl-style accessors
-   using const_iterator = FilePaths::const_iterator;
-   const_iterator begin() const { return mHistory.begin(); }
-   const_iterator end() const { return mHistory.end(); }
+   std::vector<FilePath>::const_iterator begin() const { return mHistory.begin(); }
+   std::vector<FilePath>::const_iterator end() const { return mHistory.end(); }
    const FilePath &operator[] ( size_t ii ) const { return mHistory[ ii ]; }
    bool empty() const { return mHistory.empty(); }
 
@@ -69,7 +68,7 @@ class AUDACITY_DLL_API FileHistory
    wxWindowID mIDBase;
 
    std::vector< wxWeakRef< wxMenu > > mMenus;
-   FilePaths mHistory;
+    std::vector<FilePath> mHistory;
 
    wxString mGroup;
 };

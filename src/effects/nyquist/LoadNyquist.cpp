@@ -127,9 +127,8 @@ bool NyquistEffectsModule::Initialize()
 {
    const auto &audacityPathList = FileNames::AudacityPathList();
 
-   for (size_t i = 0, cnt = audacityPathList.size(); i < cnt; i++)
-   {
-      wxFileName name(audacityPathList[i], wxT(""));
+   for (const auto &path : audacityPathList) {
+      wxFileName name(path, wxT(""));
       name.AppendDir(wxT("nyquist"));
       name.SetFullName(wxT("nyquist.lsp"));
       if (name.FileExists())
@@ -192,13 +191,13 @@ bool NyquistEffectsModule::AutoRegisterPlugins(PluginManagerInterface & pm)
    {
       files.clear();
       pm.FindFilesInPathList(kShippedEffects[i], pathList, files);
-      for (size_t j = 0, cnt = files.size(); j < cnt; j++)
-      {
+
+      for (const auto& fname : files) {
          /*
            TODO: Currently the names of Nyquist plug-ins cannot have
           context specific translations or internal names different from
           the visible English names.
-   
+
           This makes it unnecessary to pass a second argument to
           IsPluginRegistered for correction of the registry (as is needed
           in the case of built-in effects).
@@ -207,10 +206,10 @@ bool NyquistEffectsModule::AutoRegisterPlugins(PluginManagerInterface & pm)
           .ny files to access their $name lines so that this argument could
           be supplied.
           */
-         if (!pm.IsPluginRegistered(files[j]))
+         if (!pm.IsPluginRegistered(fname))
          {
             // No checking of error ?
-            DiscoverPluginsAtPath(files[j], ignoredErrMsg,
+            DiscoverPluginsAtPath(fname, ignoredErrMsg,
                PluginManagerInterface::DefaultRegistrationCallback);
          }
       }
@@ -226,7 +225,7 @@ PluginPaths NyquistEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
    FilePaths files;
 
    // Add the Nyquist prompt
-   files.push_back(NYQUIST_PROMPT_ID);
+   files.insert(NYQUIST_PROMPT_ID);
 
    // Load .ny plug-ins
    pm.FindFilesInPathList(wxT("*.ny"), pathList, files);

@@ -11,7 +11,7 @@
 *******************************************************************//*!
 
 \file ModuleManager.cpp
-\brief Based on LoadLadspa, this code loads pluggable Audacity 
+\brief Based on LoadLadspa, this code loads pluggable Audacity
 extension modules.  It also has the code to
 invoke a function returning a replacement window,
 i.e. an alternative to the usual interface, for Audacity.
@@ -120,7 +120,7 @@ bool Module::Load(wxString &deferredErrorMessage)
       return true;
    }
 
-   // However if we do have it and it does not work, 
+   // However if we do have it and it does not work,
    // then the module is bad.
    bool res = ((mDispatch(ModuleInitialize))!=0);
    if (res) {
@@ -257,12 +257,10 @@ void ModuleManager::TryLoadModules(
       // Only process the first module encountered in the
       // defined search sequence.
       wxString ShortName = wxFileName( file ).GetName();
-      if( checked.Index( ShortName, false ) != wxNOT_FOUND )
-         continue;
-      checked.Add( ShortName );
+      checked.insert(ShortName);
 
       // Skip if a previous pass through this function decided it already
-      if( decided.Index( ShortName, false ) != wxNOT_FOUND )
+      if (decided.find(ShortName) != decided.end())
          continue;
 
 #ifdef EXPERIMENTAL_MODULE_PREFS
@@ -304,7 +302,7 @@ void ModuleManager::TryLoadModules(
          }
 #endif
          if(action == 1){   // "No"
-            decided.Add( ShortName );
+            decided.insert( ShortName );
             continue;
          }
       }
@@ -318,7 +316,7 @@ void ModuleManager::TryLoadModules(
       auto umodule = std::make_unique<Module>(file);
          if (umodule->Load(Error))   // it will get rejected if there are version problems
       {
-         decided.Add( ShortName );
+         decided.insert( ShortName );
          auto module = umodule.get();
 
          if (!module->HasDispatch())
@@ -422,7 +420,7 @@ bool ModuleManager::DiscoverProviders()
    InitializeBuiltins();
 
 // The commented out code loads modules whether or not they are enabled.
-// none of our modules is a 'provider' of effects, so this code commented out. 
+// none of our modules is a 'provider' of effects, so this code commented out.
 #if 0
    FilePaths provList;
    FilePaths pathList;
@@ -468,7 +466,7 @@ void ModuleManager::InitializeBuiltins()
          ModuleInterface *pInterface = module.get();
          auto id = GetID(pInterface);
 
-         // Need to remember it 
+         // Need to remember it
          mDynModules[id] = std::move(module);
       }
       else
@@ -527,7 +525,7 @@ bool ModuleManager::IsProviderValid(const PluginID & WXUNUSED(providerID),
    // Builtin modules do not have a path
    if (path.empty())
    {
-      return true;  
+      return true;
    }
 
    wxFileName lib(path);

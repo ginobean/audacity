@@ -198,15 +198,16 @@ wxString FileNames::MkDir(const wxString &Str)
 void FileNames::MakeNameUnique(FilePaths &otherNames,
    wxFileName &newName)
 {
-   if (otherNames.Index(newName.GetFullName(), false) >= 0) {
+    if (otherNames.find(newName.GetFullName()) != otherNames.end()) {
       int i=2;
       wxString orig = newName.GetName();
       do {
          newName.SetName(wxString::Format(wxT("%s-%d"), orig, i));
          i++;
-      } while (otherNames.Index(newName.GetFullName(), false) >= 0);
+      } while (otherNames.find(newName.GetFullName()) != otherNames.end());
    }
-   otherNames.push_back(newName.GetFullName());
+
+   otherNames.insert(newName.GetFullName());
 }
 
 // The APP name has upercase first letter (so that Quit Audacity is correctly
@@ -623,12 +624,7 @@ void FileNames::AddUniquePathToPathList(const FilePath &pathArg,
    pathNorm.Normalize();
    const wxString newpath{ pathNorm.GetFullPath() };
 
-   for(const auto &path : pathList) {
-      if (pathNorm == wxFileNameWrapper{ path })
-         return;
-   }
-
-   pathList.push_back(newpath);
+   pathList.insert(newpath);
 }
 
 // static
@@ -659,11 +655,17 @@ void FileNames::FindFilesInPathList(const wxString & pattern,
 
    wxFileNameWrapper ff;
 
-   for(size_t i = 0; i < pathList.size(); i++) {
-      ff = pathList[i] + wxFILE_SEP_PATH + pattern;
-      wxDir::GetAllFiles(ff.GetPath(), &results, ff.GetFullName(), flags);
+   for (const auto & path : pathList) {
+       wxArrayString arrayString;
+
+      ff = path + wxFILE_SEP_PATH + pattern;
+      wxDir::GetAllFiles(ff.GetPath(), &arrayString, ff.GetFullName(), flags);
+      for (const auto& val : arrayString) {
+          results.insert(val);
+      }
    }
 }
+
 
 bool FileNames::WritableLocationCheck(const FilePath& path,
                                     const TranslatableString & message)

@@ -633,8 +633,9 @@ void ExportMultipleDialog::OnExport(wxCommandEvent& WXUNUSED(event))
          ).Format((long long) mExported.size());
 
       wxString FileList;
-      for (size_t i = 0; i < mExported.size(); i++) {
-         FileList += mExported[i];
+
+      for (const auto& path : mExported) {
+         FileList += path;
          FileList += '\n';
       }
 
@@ -1134,7 +1135,7 @@ ProgressResult ExportMultipleDialog::DoExport(std::unique_ptr<ProgressDialog> &p
                                                 mSubFormatIndex);
 
    if (success == ProgressResult::Success || success == ProgressResult::Stopped) {
-      mExported.push_back(fullPath);
+      mExported.insert(fullPath);
    }
 
    Refresh();

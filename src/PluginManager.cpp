@@ -441,7 +441,7 @@ void PluginManager::FindFilesInPathList(const wxString & pattern,
                                         FilePaths & files,
                                         bool directories)
 {
-   
+
    wxLogNull nolog;
 
    // Why bother...
@@ -457,9 +457,9 @@ void PluginManager::FindFilesInPathList(const wxString & pattern,
    // Add the "per-user" plug-ins directory
    {
       const wxFileName &ff = FileNames::PlugInDir();
-      paths.push_back(ff.GetFullPath());
+      paths.insert(ff.GetFullPath());
    }
- 
+
    // Add the "Audacity" plug-ins directory
    wxFileName ff = PlatformCompatibility::GetExecutablePath();
 #if defined(__WXMAC__)
@@ -470,24 +470,24 @@ void PluginManager::FindFilesInPathList(const wxString & pattern,
    ff.RemoveLastDir();
 #endif
    ff.AppendDir(wxT("plug-ins"));
-   paths.push_back(ff.GetPath());
+   paths.insert(ff.GetPath());
 
    // Weed out duplicates
    for (const auto &filePath : pathList)
    {
       ff = filePath;
       const wxString path{ ff.GetFullPath() };
-      if (paths.Index(path, wxFileName::IsCaseSensitive()) == wxNOT_FOUND)
-      {
-         paths.push_back(path);
-      }
+      paths.insert(path);
    }
 
    // Find all matching files in each path
-   for (size_t i = 0, cnt = paths.size(); i < cnt; i++)
-   {
-      ff = paths[i] + wxFILE_SEP_PATH + pattern;
-      wxDir::GetAllFiles(ff.GetPath(), &files, ff.GetFullName(), directories ? wxDIR_DEFAULT : wxDIR_FILES);
+   for (const auto& path : paths) {
+       wxArrayString arrayString;
+       ff = path + wxFILE_SEP_PATH + pattern;
+       wxDir::GetAllFiles(ff.GetPath(), &arrayString, ff.GetFullName(), directories ? wxDIR_DEFAULT : wxDIR_FILES);
+       for (const auto& val : arrayString) {
+           files.insert(val);
+       }
    }
 
    return;
@@ -858,7 +858,7 @@ bool PluginManager::DropFile(const wxString &fileName)
          }
       }
    }
-   
+
    return false;
 }
 
@@ -1337,7 +1337,7 @@ void PluginManager::CheckForUpdates(bool bFast)
    }
 
    // Check all known plugins to ensure they are still valid and scan for NEW ones.
-   // 
+   //
    // All NEW plugins get a stub entry created that will remain in place until the
    // user enables or disables the plugin.
    //
@@ -1361,10 +1361,10 @@ void PluginManager::CheckForUpdates(bool bFast)
 
       if ( plugType == PluginTypeModule  )
       {
-         if( bFast ) 
+         if( bFast )
          {
             // Skip modules, when doing a fast refresh/check.
-         } 
+         }
          else if (!mm.IsProviderValid(plugID, plugPath))
          {
             plug.SetEnabled(false);
@@ -1478,7 +1478,7 @@ void PluginManager::Iterator::Advance(bool incrementing)
 PluginManager::Iterator::Iterator(PluginManager &manager)
 : mPm{ manager }
 , mIterator{ manager.mPlugins.begin() }
-{   
+{
 }
 
 PluginManager::Iterator::Iterator(PluginManager &manager, int type)
@@ -1862,7 +1862,7 @@ RegistryPath PluginManager::SettingsPath(const PluginID & ID, bool shared)
       return {};
    else {
       const PluginDescriptor & plug = iter->second;
-      
+
       wxString id = GetPluginTypeString(plug.GetPluginType()) +
                     wxT("_") +
                     plug.GetEffectFamily() + // is empty for non-Effects

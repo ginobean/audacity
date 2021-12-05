@@ -207,12 +207,12 @@ bool LadspaEffectsModule::AutoRegisterPlugins(PluginManagerInterface & pm)
    {
       files.clear();
       pm.FindFilesInPathList(kShippedEffects[i], pathList, files);
-      for (size_t j = 0, cnt = files.size(); j < cnt; j++)
-      {
-         if (!pm.IsPluginRegistered(files[j]))
+
+      for (const auto& fname : files) {
+         if (!pm.IsPluginRegistered(fname))
          {
             // No checking for error ?
-            DiscoverPluginsAtPath(files[j], ignoredErrMsg,
+            DiscoverPluginsAtPath(fname, ignoredErrMsg,
                PluginManagerInterface::DefaultRegistrationCallback);
          }
       }
@@ -238,7 +238,7 @@ PluginPaths LadspaEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
    pm.FindFilesInPathList(wxT("*.dll"), pathList, files, true);
 
 #else
-   
+
    // Recursively scan for all shared objects
    pm.FindFilesInPathList(wxT("*.so"), pathList, files, true);
 
@@ -356,7 +356,7 @@ FilePaths LadspaEffectsModule::GetSearchPaths()
       wxStringTokenizer tok(pathVar, wxPATH_SEP);
       while (tok.HasMoreTokens())
       {
-         pathList.push_back(tok.GetNextToken());
+          pathList.insert(tok.GetNextToken());
       }
    }
 
@@ -364,8 +364,8 @@ FilePaths LadspaEffectsModule::GetSearchPaths()
 #define LADSPAPATH wxT("/Library/Audio/Plug-Ins/LADSPA")
 
    // Look in ~/Library/Audio/Plug-Ins/LADSPA and /Library/Audio/Plug-Ins/LADSPA
-   pathList.push_back(wxGetHomeDir() + wxFILE_SEP_PATH + LADSPAPATH);
-   pathList.push_back(LADSPAPATH);
+   pathList.insert(wxGetHomeDir() + wxFILE_SEP_PATH + LADSPAPATH);
+   pathList.insert(LADSPAPATH);
 
 #elif defined(__WXMSW__)
 
@@ -373,14 +373,14 @@ FilePaths LadspaEffectsModule::GetSearchPaths()
 
 #else
 
-   pathList.push_back(wxGetHomeDir() + wxFILE_SEP_PATH + wxT(".ladspa"));
+   pathList.insert(wxGetHomeDir() + wxFILE_SEP_PATH + wxT(".ladspa"));
 #if defined(__LP64__)
-   pathList.push_back(wxT("/usr/local/lib64/ladspa"));
-   pathList.push_back(wxT("/usr/lib64/ladspa"));
+   pathList.insert(wxT("/usr/local/lib64/ladspa"));
+   pathList.insert(wxT("/usr/lib64/ladspa"));
 #endif
-   pathList.push_back(wxT("/usr/local/lib/ladspa"));
-   pathList.push_back(wxT("/usr/lib/ladspa"));
-   pathList.push_back(wxT(LIBDIR) wxT("/ladspa"));
+   pathList.insert(wxT("/usr/local/lib/ladspa"));
+   pathList.insert(wxT("/usr/lib/ladspa"));
+   pathList.insert(wxT(LIBDIR) wxT("/ladspa"));
 
 #endif
 
@@ -739,7 +739,7 @@ bool LadspaEffect::SetHost(EffectHostInterface *host)
       // Collect the audio ports
       if (LADSPA_IS_PORT_AUDIO(d))
       {
-         if (LADSPA_IS_PORT_INPUT(d)) 
+         if (LADSPA_IS_PORT_INPUT(d))
          {
             mInputPorts[mAudioIns++] = p;
          }
@@ -1797,7 +1797,7 @@ void LadspaEffect::RefreshControls(bool outputOnly)
          forceint = true;
       }
 
-      if (LADSPA_IS_PORT_OUTPUT(d)) 
+      if (LADSPA_IS_PORT_OUTPUT(d))
       {
          continue;
       }

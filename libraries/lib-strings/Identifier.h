@@ -1,11 +1,11 @@
 /**********************************************************************
- 
+
  Audacity: A Digital Audio Editor
- 
+
  Identifier.h
- 
+
  Paul Licameli split from Types.h
- 
+
  **********************************************************************/
 
 #ifndef __AUDACITY_IDENTIFIER__
@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <wx/string.h>
+#include <set>
 
 //! An explicitly nonlocalized string, not meant for the user to see.
 /*! String manipulations are discouraged, other than splitting and joining on separator characters.
@@ -225,7 +226,8 @@ using FileExtension = wxString;
 using FileExtensions = wxArrayStringEx;
 
 using FilePath = wxString;
-using FilePaths = wxArrayStringEx;
+// using FilePaths = wxArrayStringEx;
+using FilePaths =std::set<wxString>;
 
 struct CommandIdTag;
 //! Identifies a menu command or macro. Case-insensitive comparison
@@ -236,4 +238,3 @@ struct ManualPageIDTag;
 using ManualPageID = TaggedIdentifier< ManualPageIDTag >;
 
 #endif
-

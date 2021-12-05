@@ -10,7 +10,7 @@
 ********************************************************************//*!
 
 \class MacroCommands
-\brief Maintains the list of commands for batch/macro 
+\brief Maintains the list of commands for batch/macro
 processing.  See also MacrosWindow and ApplyMacroDialog.
 
 *//*******************************************************************/
@@ -343,7 +343,7 @@ MacroCommandsCatalog::MacroCommandsCatalog( const AudacityProject *project )
          else {
             // We'll disambiguate if the squashed name is short and shorter than the internal name.
             // Otherwise not.
-            // This means we won't have repetitive items like "Cut (Cut)" 
+            // This means we won't have repetitive items like "Cut (Cut)"
             // But we will show important disambiguation like "All (SelectAll)" and "By Date (SortByDate)"
             // Disambiguation is no longer essential as the details box will show it.
             // PRL:  I think this reasoning applies only when locale is English.
@@ -510,7 +510,7 @@ bool MacroCommands::DoAudacityCommand(
    }
 
    EffectManager & em = EffectManager::Get();
-   bool success = em.DoAudacityCommand(ID, 
+   bool success = em.DoAudacityCommand(ID,
       context,
       &window,
       (flags & EffectManager::kConfigured) == 0);
@@ -890,7 +890,7 @@ void MacroCommands::MigrateLegacyChains()
       // which old Audacity will not read.
 
       const auto oldDir = FileNames::LegacyChainDir();
-      FilePaths files;
+      wxArrayStringEx files;
       wxDir::GetAllFiles(oldDir, &files, wxT("*.txt"), wxDIR_FILES);
 
       // add a dummy path component to be overwritten by SetFullName
@@ -913,7 +913,7 @@ wxArrayString MacroCommands::GetNames()
    MigrateLegacyChains();
 
    wxArrayString names;
-   FilePaths files;
+   wxArrayStringEx files;
    wxDir::GetAllFiles(FileNames::MacroDir(), &files, wxT("*.txt"), wxDIR_FILES);
    size_t i;
 

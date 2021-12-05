@@ -56,14 +56,22 @@ void FileHistory::AddFileToHistory(const FilePath & file, bool update)
       return;
    }
 
-#if defined(__WXMSW__)
-   int i = mHistory.Index(file, false);
-#else
-   int i = mHistory.Index(file, true);
-#endif
+   int i = -1;
+   for (const auto& path : mHistory) {
+       i++;
 
-   if (i != wxNOT_FOUND) {
-      mHistory.erase( mHistory.begin() + i );
+#if defined(__WXMSW__)
+       if (path.CmpNoCase(file) == 0)
+#else
+       if (path.Cmp(file) == 0)
+#endif
+       {
+           break;
+       }
+   }
+
+   if ((i > -1) && (i < mHistory.size())) {
+       mHistory.erase( mHistory.begin() + i );
    }
 
    if (mMaxFiles > 0 && mMaxFiles == mHistory.size()) {
@@ -188,4 +196,3 @@ void FileHistory::Compress()
      end
    );
 }
-

@@ -79,7 +79,7 @@
 #include <dlfcn.h>
 #endif
 
-// TODO:  Unfortunately we have some dependencies on Audacity provided 
+// TODO:  Unfortunately we have some dependencies on Audacity provided
 //        dialogs, widgets and other stuff.  This will need to be cleaned up.
 
 #include "FileNames.h"
@@ -151,7 +151,7 @@ DECLARE_MODULE_ENTRY(AudacityModule)
 // ============================================================================
 //
 // Register this as a builtin module
-// 
+//
 // We also take advantage of the fact that wxModules are initialized before
 // the wxApp::OnInit() method is called.  We check to see if Audacity was
 // executed to scan a VST effect in a different process.
@@ -403,16 +403,16 @@ PluginPaths VSTEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
       wxStringTokenizer tok(vstpath, wxPATH_SEP);
       while (tok.HasMoreTokens())
       {
-         pathList.push_back(tok.GetNextToken());
+         pathList.insert(tok.GetNextToken());
       }
    }
 
-#if defined(__WXMAC__)  
+#if defined(__WXMAC__)
 #define VSTPATH wxT("/Library/Audio/Plug-Ins/VST")
 
    // Look in ~/Library/Audio/Plug-Ins/VST and /Library/Audio/Plug-Ins/VST
-   pathList.push_back(wxGetHomeDir() + wxFILE_SEP_PATH + VSTPATH);
-   pathList.push_back(VSTPATH);
+   pathList.insert(wxGetHomeDir() + wxFILE_SEP_PATH + VSTPATH);
+   pathList.insert(VSTPATH);
 
    // Recursively search all paths for Info.plist files.  This will identify all
    // bundles.
@@ -448,7 +448,7 @@ PluginPaths VSTEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
       tpath[len] = 0;
       dpath[0] = 0;
       ExpandEnvironmentStrings(tpath, dpath, WXSIZEOF(dpath));
-      pathList.push_back(dpath);
+      pathList.insert(dpath);
    }
 
    // Then try HKEY_LOCAL_MACHINE registry key
@@ -465,7 +465,7 @@ PluginPaths VSTEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
       tpath[len] = 0;
       dpath[0] = 0;
       ExpandEnvironmentStrings(tpath, dpath, WXSIZEOF(dpath));
-      pathList.push_back(dpath);
+      pathList.insert(dpath);
    }
 
    // Add the default path last
@@ -473,7 +473,7 @@ PluginPaths VSTEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
    ExpandEnvironmentStrings(wxT("%ProgramFiles%\\Steinberg\\VSTPlugins"),
                             dpath,
                             WXSIZEOF(dpath));
-   pathList.push_back(dpath);
+   pathList.insert(dpath);
 
    // Recursively scan for all DLLs
    pm.FindFilesInPathList(wxT("*.dll"), pathList, files, true);
@@ -484,12 +484,12 @@ PluginPaths VSTEffectsModule::FindPluginPaths(PluginManagerInterface & pm)
    if (vstpath.empty())
    {
       // We add this "non-default" one
-      pathList.push_back(wxT(LIBDIR) wxT("/vst"));
+      pathList.insert(wxT(LIBDIR) wxT("/vst"));
 
       // These are the defaults used by other hosts
-      pathList.push_back(wxT("/usr/lib/vst"));
-      pathList.push_back(wxT("/usr/local/lib/vst"));
-      pathList.push_back(wxGetHomeDir() + wxFILE_SEP_PATH + wxT(".vst"));
+      pathList.insert(wxT("/usr/lib/vst"));
+      pathList.insert(wxT("/usr/local/lib/vst"));
+      pathList.insert(wxGetHomeDir() + wxFILE_SEP_PATH + wxT(".vst"));
    }
 
    // Recursively scan for all shared objects
@@ -1163,7 +1163,7 @@ VSTEffect::VSTEffect(const PluginPath & path, VSTEffect *master)
    mTimeInfo.flags = kVstTempoValid | kVstNanosValid;
 
    // UI
-   
+
    mGui = false;
    mContainer = NULL;
 
@@ -2093,7 +2093,7 @@ bool VSTEffect::Load()
 
       // Try to load the library
       auto lib = std::make_unique<wxDynamicLibrary>(realPath);
-      if (!lib) 
+      if (!lib)
          return false;
 
       // Bail if it wasn't successful
@@ -2119,7 +2119,7 @@ bool VSTEffect::Load()
    //
    // Spent a few days trying to figure out why some VSTs where running okay and
    // others were hit or miss.  The cause was that we export all of Audacity's
-   // symbols and some of the loaded libraries were picking up Audacity's and 
+   // symbols and some of the loaded libraries were picking up Audacity's and
    // not their own.
    //
    // So far, I've only seen this issue on Linux, but we might just be getting
@@ -2138,7 +2138,7 @@ bool VSTEffect::Load()
       (char*) dlopen((const char *)wxString(realPath).ToUTF8(),
                      RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND)
    };
-   if (!lib) 
+   if (!lib)
    {
       return false;
    }
@@ -3352,7 +3352,7 @@ bool VSTEffect::LoadFXProgram(unsigned char **bptr, ssize_t & len, int index, bo
             return false;
          }
       }
-         
+
       // They look okay...time to start changing things
       if (!dryrun)
       {
@@ -3418,7 +3418,7 @@ bool VSTEffect::LoadFXProgram(unsigned char **bptr, ssize_t & len, int index, bo
       // Unknown type
       return false;
    }
-   
+
    if (!dryrun)
    {
       SetString(effSetProgramName, wxString(progName), index);

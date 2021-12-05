@@ -9,8 +9,8 @@
 *******************************************************************//**
 
 \class ModulePrefs
-\brief A PrefsPanel to enable/disable certain modules.  'Modules' are 
-dynamically linked libraries that modify Audacity.  They are plug-ins 
+\brief A PrefsPanel to enable/disable certain modules.  'Modules' are
+dynamically linked libraries that modify Audacity.  They are plug-ins
 with names like mod-script-pipe that add NEW features.
 
 *//*******************************************************************/
@@ -90,7 +90,7 @@ void ModulePrefs::GetAllModuleStatuses(){
          //wxLogDebug( wxT("Entry: %s Value: %i"), str, iStatus );
          mModules.push_back( str );
          mStatuses.push_back( iStatus );
-         mPaths.push_back( fname );
+         mPaths.insert( fname );
       }
       bCont = gPrefs->GetNextEntry(str, dummy);
    }
@@ -158,9 +158,12 @@ bool ModulePrefs::Commit()
 {
    ShuttleGui S(this, eIsSavingToPrefs);
    PopulateOrExchange(S);
-   int i;
-   for(i=0;i<(int)mPaths.size();i++)
-      ModuleSettings::SetModuleStatus( mPaths[i], mStatuses[i] );
+   int i = 0;
+   for (const auto& path : mPaths) {
+      ModuleSettings::SetModuleStatus( path, mStatuses[i] );
+      i++;
+   }
+
    return true;
 }
 

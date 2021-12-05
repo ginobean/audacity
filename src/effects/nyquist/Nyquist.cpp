@@ -251,13 +251,14 @@ FilePath NyquistEffect::HelpPage()
    auto paths = NyquistEffect::GetNyquistSearchPath();
    wxString fileName;
 
-   for (size_t i = 0, cnt = paths.size(); i < cnt; i++) {
-      fileName = wxFileName(paths[i] + wxT("/") + mHelpFile).GetFullPath();
+   for (const auto& path : paths) {
+      fileName = wxFileName(path + wxT("/") + mHelpFile).GetFullPath();
       if (wxFileExists(fileName)) {
          mHelpFileExists = true;
          return fileName;
       }
    }
+
    return wxEmptyString;
 }
 
@@ -719,10 +720,10 @@ bool NyquistEffect::Process()
 
       auto paths = NyquistEffect::GetNyquistSearchPath();
       wxString list;
-      for (size_t i = 0, cnt = paths.size(); i < cnt; i++)
-      {
-         list += wxT("\"") + EscapeString(paths[i]) + wxT("\" ");
+      for (const auto& path : paths) {
+         list += wxT("\"") + EscapeString(path) + wxT("\" ");
       }
+
       list = list.RemoveLast();
 
       mProps += wxString::Format(wxT("(putprop '*SYSTEM-DIR* (list %s) 'PLUGIN)\n"), list);
@@ -2570,14 +2571,14 @@ FilePaths NyquistEffect::GetNyquistSearchPath()
    const auto &audacityPathList = FileNames::AudacityPathList();
    FilePaths pathList;
 
-   for (size_t i = 0; i < audacityPathList.size(); i++)
-   {
-      wxString prefix = audacityPathList[i] + wxFILE_SEP_PATH;
+   for (const auto& path : audacityPathList) {
+      wxString prefix = path + wxFILE_SEP_PATH;
       FileNames::AddUniquePathToPathList(prefix + wxT("nyquist"), pathList);
       FileNames::AddUniquePathToPathList(prefix + wxT("plugins"), pathList);
       FileNames::AddUniquePathToPathList(prefix + wxT("plug-ins"), pathList);
    }
-   pathList.push_back(FileNames::PlugInDir());
+
+   pathList.insert(FileNames::PlugInDir());
 
    return pathList;
 }

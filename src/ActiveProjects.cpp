@@ -32,7 +32,7 @@ FilePaths ActiveProjects::GetAll()
    {
       wxFileName path = gPrefs->Read(key, wxT(""));
 
-      files.Add(path.GetFullPath());
+      files.insert(path.GetFullPath());
 
       more = gPrefs->GetNextEntry(key, ndx);
    }
@@ -95,4 +95,3 @@ wxString ActiveProjects::Find(const FilePath &path)
 
    return found ? key : wxString{};
 }
-

@@ -57,8 +57,13 @@ static void FindFilesInPathList(const wxString & pattern,
 {
    wxFileName ff;
    for (const auto &path : pathList) {
+       wxArrayString arrayString;
+
       ff = path + wxFILE_SEP_PATH + pattern;
-      wxDir::GetAllFiles(ff.GetPath(), &results, ff.GetFullName(), wxDIR_FILES);
+      wxDir::GetAllFiles(ff.GetPath(), &arrayString, ff.GetFullName(), wxDIR_FILES);
+      for (const auto &val : arrayString) {
+          results.insert(val);
+      }
    }
 }
 
@@ -220,14 +225,12 @@ void GetLanguages( FilePaths pathList,
       wxFileName pathNorm{ wxStandardPaths::Get().GetInstallPrefix() + L"/share/locale" };
       pathNorm.Normalize();
       const wxString newPath{ pathNorm.GetFullPath() };
-      if (pathList.end() ==
-          std::find(pathList.begin(), pathList.end(), newPath))
-         pathList.push_back(newPath);
+      pathList.insert(newPath);
    }
 #endif
 
    // For each language in our list we look for a corresponding entry in
-   // wxLocale.  
+   // wxLocale.
    for ( auto end = localLanguageName.end(), i = localLanguageName.begin();
       i != end; ++i )
    {

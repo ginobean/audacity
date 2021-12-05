@@ -223,11 +223,9 @@ class wxArrayStringEx;
 
 //! File extension, not including any leading dot
 using FileExtension = wxString;
-// using FileExtensions = wxArrayStringEx;
 using FileExtensions = std::set<wxString>;
 
 using FilePath = wxString;
-// using FilePaths = wxArrayStringEx;
 using FilePaths =std::set<wxString>;
 
 struct CommandIdTag;

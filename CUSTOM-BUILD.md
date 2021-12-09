@@ -69,6 +69,23 @@ $ sudo apt-get install libgtk2.0-dev libasound2-dev libavformat-dev libjack-jack
 
    ```
 
+Notes:
+
+   I encountered a slow startup issue, on my Ubuntu machine, which I narrowed
+down to GTK. It was taking about 25 seconds, just to get to the initial
+Audacity logo screen! Seems to be some kind of issue with GTK trying to
+talk to DBus. Anyways, I installed the following packages:
+
+  * unity-gtk2-module
+  * gtk2-engines
+  * gtk2-engines-murrine
+  * libgtk2.0-0
+  * libunity-gtk2-parser0
+  * overlay-scrollbar-gtk2
+
+And, after a system reboot, the slow startup issue seems to have been resolved!
+   - ginobean, 09 dec 2021.
+
 ## Building on Mac OS
 
 1. Clone Audacity from the Audacity GitHub project.
@@ -99,5 +116,6 @@ Steps 1 and 2 are only required for first-time builds.
 
 
 
+-----
 
 # EOF

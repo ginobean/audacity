@@ -74,7 +74,7 @@ Notes:
    I encountered a slow startup issue, on my Ubuntu machine, which I narrowed
 down to GTK. It was taking about 25 seconds, just to get to the initial
 Audacity logo screen! Seems to be some kind of issue with GTK trying to
-talk to DBus. Anyways, I installed the following packages:
+talk to DBus. Anyways, I installed the following apt packages:
 
   * unity-gtk2-module
   * gtk2-engines
